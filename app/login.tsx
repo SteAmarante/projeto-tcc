@@ -1,24 +1,16 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import PocketBase from 'pocketbase';
+// ...existing code...
 import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const pb = new PocketBase('http://127.0.0.1:8090'); // Altere para o endereço do seu servidor PocketBase
+  // ...existing code...
   const router = useRouter();
 
-  async function handleLogin() {
-    try {
-      const authData = await pb.collection('users').authWithPassword(email, password);
-      Alert.alert('Sucesso!', 'Login realizado com sucesso!');
-      // Exemplo: router.push('/usuario');
-    } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Não foi possível fazer login.');
-    }
-  }
+  // Função de login removida. Implemente aqui a integração desejada.
 
   function goToCadastro() {
     router.push('/cadastro');

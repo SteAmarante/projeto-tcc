@@ -1,34 +1,16 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import PocketBase from 'pocketbase';
+// ...existing code...
 import { useRouter } from 'expo-router';
 
 export default function CadastroScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const pb = new PocketBase('http://127.0.0.1:8090'); // Altere para o endereço do seu servidor PocketBase
+  // ...existing code...
   const router = useRouter();
 
-  async function handleRegister() {
-    try {
-      const user = await pb.collection('users').create({
-        email,
-        password,
-        passwordConfirm: password,
-      });
-      Alert.alert('Sucesso!', 'Cadastro realizado com sucesso!');
-      router.push('/login');
-    } catch (error: any) {
-      let errorMsg = 'Não foi possível cadastrar.';
-      if (error?.data) {
-        errorMsg = JSON.stringify(error.data);
-      } else if (error?.message) {
-        errorMsg = error.message;
-      }
-      Alert.alert('Erro', errorMsg);
-    }
-  }
+  // Função de cadastro removida. Implemente aqui a integração desejada.
 
   function goToLogin() {
     router.push('/login');

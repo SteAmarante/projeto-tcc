@@ -31,7 +31,18 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env*
+
+# SQL scripts, backups e dumps
+sql/
+*.sql
+*.dump
+*.bak
+
+# Arquivos de configuração do banco
+*.db
+*.sqlite
+*.mysql
 
 # typescript
 *.tsbuildinfo
