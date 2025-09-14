@@ -42,6 +42,41 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+
+// Endpoint para buscar dados do usuário autenticado
+app.post('/api/usuario', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email é obrigatório.' });
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, nome: true, email: true }
+    });
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado.' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint para buscar resultados dos questionários do usuário
+app.post('/api/usuario/resultados', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email é obrigatório.' });
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado.' });
+    // Supondo que existe uma tabela 'resultado' relacionada ao usuário
+    const resultados = await prisma.resultado.findMany({
+      where: { userId: user.id },
+      select: { id: true, titulo: true, resultado: true }
+    });
+    res.json(resultados);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);

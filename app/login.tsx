@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -9,17 +10,30 @@ export default function LoginScreen() {
   const router = useRouter();
 
   // Função de login
-  function handleLogin() {
+  async function handleLogin() {
     if (!email || !password) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
 
-    // Aqui você faria a chamada à API de login
-    console.log('Tentando login com:', email, password);
-
-    // Se login der certo
-    router.push('/usuario');
+    try {
+      // Chamada à API de login
+      const response = await fetch('http://localhost:4000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha: password })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        // Salva o email do usuário logado
+        await AsyncStorage.setItem('usuarioEmail', email);
+        router.push('/usuario');
+      } else {
+        Alert.alert('Erro', data.error || 'Login falhou.');
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+    }
   }
 
   function goToCadastro() {

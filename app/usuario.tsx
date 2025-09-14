@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -9,20 +10,35 @@ export default function UsuarioScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Buscar dados do usuário e resultados do backend
     async function fetchData() {
       setLoading(true);
       try {
-        // Exemplo de requisição (substitua pela sua API)
-        // const userResponse = await fetch('URL_API_USUARIO');
-        // const userData = await userResponse.json();
-        // setUsuario(userData);
+        // Recupera o email do usuário logado
+        const emailUsuario = await AsyncStorage.getItem('usuarioEmail');
+        if (!emailUsuario) {
+          setLoading(false);
+          return;
+        }
+        // Buscar dados do usuário
+        const userResponse = await fetch('http://localhost:4000/api/usuario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailUsuario })
+        });
+        const userData = await userResponse.json();
+        setUsuario(userData);
 
-        // const resultsResponse = await fetch('URL_API_RESULTADOS');
-        // const resultsData = await resultsResponse.json();
-        // setResultados(resultsData);
+        // Buscar resultados dos questionários
+        const resultsResponse = await fetch('http://localhost:4000/api/usuario/resultados', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailUsuario })
+        });
+        const resultsData = await resultsResponse.json();
+        setResultados(resultsData);
       } catch (error) {
         // Trate erros de requisição
+        console.error('Erro ao buscar dados:', error);
       } finally {
         setLoading(false);
       }
