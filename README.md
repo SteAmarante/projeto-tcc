@@ -1,50 +1,67 @@
-# Welcome to your Expo app 👋
+# RiskTrack - Sistema de Gerenciamento de Riscos
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Este é o repositório oficial do projeto de Conclusão de Curso (TCC) **RiskTrack**.
 
-## Get started
+## ⚠️ Aviso Importante
 
-1. Install dependencies
+Este projeto é estritamente para fins acadêmicos e faz parte do meu Trabalho de Conclusão de Curso. Portanto, **NÃO É PERMITIDA a cópia, distribuição ou utilização total ou parcial deste código para outros trabalhos acadêmicos ou projetos comerciais sem autorização prévia.**
 
-   ```bash
-   npm install
-   ```
+O plágio é uma violação dos direitos autorais e da ética acadêmica.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## 📖 Sobre o Projeto
 
-In the output, you'll find options to open the app in a
+O RiskTrack é um sistema desenvolvido para ajudar pequenos empreendedores a gerenciar os riscos de segurança da informação do seu negócio. A plataforma oferece as seguintes funcionalidades:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+* **Cadastro e categorização de riscos de segurança**
+* **Avaliação de probabilidade e impacto dos riscos**
+* **Geração de planos de ação e mitigação**
+* **Dashboard visual com indicadores e relatórios**
+* **Relatórios personalizados para análise de riscos**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🛠️ Tecnologias Utilizadas
 
-## Get a fresh project
+As principais tecnologias e ferramentas utilizadas no desenvolvimento do RiskTrack foram:
 
-When you're ready, run:
+* **Linguagem de Programação:** JavaScript
+* **Framework Frontend:** React.js
+* **Backend como Serviço:** Prisma e MySQL
+* **Banco de Dados:** MySQL
+* **Autenticação:** MySQL
+* **Hospedagem:** Prisma e MySQL
+* **Outras Ferramentas:** Git, GitHub, Visual Studio Code
 
-```bash
-npm run reset-project
-```
+## 🚀 Como Executar o Projeto
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Pré-requisitos:
+- Node.js (versão 16 ou superior)
+- npm ou yarn
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
+## 🚀 Como Executar o Projeto
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1.  Clone o repositório:
+    ```bash
+    git clone [https://github.com/SteAmarante/projeto-tcc.git](https://github.com/SteAmarante/projeto-tcc.git)
+    ```
+2.  Acesse a pasta do projeto:
+    ```bash
+    cd risktrack
+    ```
+3.  Instale as dependências:
+    ```bash
+    npm install
+    ```
+4.  Inicie a aplicação:
+    ```bash
+    npm start
+    ```
 
-## Join the community
+## 📫 Contato e Contribuições
 
-Join our community of developers creating universal apps.
+Qualquer dúvida, sugestão ou observação sobre o projeto é muito bem-vinda!
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+* **Email:** [stephaniecarolamarante@gmail.com](mailto:stephaniecarolamarante@gmail.com)
+
+Se você encontrar algum problema ou tiver uma sugestão de melhoria, por favor, **abra uma [Issue](https://github.com/SteAmarante/projeto-tcc/issues)** neste repositório.
