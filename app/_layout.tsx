@@ -1,24 +1,46 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { Stack, Tabs } from 'expo-router';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        {/* A tela "index" não terá cabeçalho visível */}
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        {/*Tela para selecionar o segmento */}
+        <Stack.Screen 
+          name="segmento" 
+          options={{ 
+            title: 'Segmento de Negócio',
+            headerBackTitle: 'Voltar',
+          }} 
+        />
+        {/* A tela "questionario" terá um título no cabeçalho */}
+        <Stack.Screen 
+          name="questionario" 
+          options={{ 
+            title: 'Avaliação de Risco',
+            headerBackTitle: 'Voltar',
+          }} 
+        />
+        {/* Tela de resultado, sem cabeçalho */}
+        <Stack.Screen 
+          name="resultado" 
+          options={{ 
+            headerShown: false,
+          }} 
+        />
+        {/* TELA NOVA: Tela de login */}
+        <Stack.Screen 
+          name="login" 
+          options={{ 
+            title: 'Login',
+            headerBackTitle: 'Voltar',
+            headerShadowVisible: false
+          }} 
+        />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      // ...existing code...
+    </>
   );
 }
+
