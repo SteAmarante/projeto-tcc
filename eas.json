@@ -3,18 +3,19 @@
     "version": ">= 16.19.1",
     "appVersionSource": "remote"
   },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
+    "build": {
+        "production": {
+          "android": {
+            "gradleCommand": ":app:assembleRelease"
+          }
+        }
+      },
     "preview": {
       "distribution": "internal"
     },
     "production": {
       "autoIncrement": true
-    }
-  },
+    },
   "submit": {
     "production": {}
   }
