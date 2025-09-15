@@ -52,3 +52,12 @@ app-example
 # generated native folders
 /ios
 /android
+
+
+# .easignore
+node_modules/
+.expo/
+dist/
+build/
+*.log
+.env

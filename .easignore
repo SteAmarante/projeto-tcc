@@ -1,0 +1,12 @@
+# .easignore
+node_modules/
+.expo/
+dist/
+build/
+*.log
+.env
+.local
+.gradle/
+android/.gradle/
+android/app/build/
+android/build/
