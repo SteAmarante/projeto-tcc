@@ -3,19 +3,28 @@
     "version": ">= 16.19.1",
     "appVersionSource": "remote"
   },
-    "build": {
-        "production": {
-          "android": {
-            "gradleCommand": ":app:assembleRelease"
-          }
-        }
-      },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDebug"
+      }
+    },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {
-      "autoIncrement": true
-    },
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle",
+        "gradleCommand": ":app:assembleRelease"
+      }
+    }
+  },
   "submit": {
     "production": {}
   }
