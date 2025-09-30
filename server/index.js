@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
@@ -16,12 +17,23 @@ app.post('/api/cadastro', async (req, res) => {
   }
   try {
     const hash = await bcrypt.hash(senha, 10);
-    const user = await prisma.user.create({
-      data: { nome, email, password: hash }
+    // CORREÇÃO: O modelo é 'usuario', não 'user'.
+    // CORREÇÃO: O campo no banco é 'senha', não 'password'.
+    const novoUsuario = await prisma.usuario.create({
+      data: { 
+        nome, 
+        email, 
+        senha: hash // O campo no seu banco de dados se chama 'senha'
+      }
     });
-    res.status(201).json({ message: 'Usuário cadastrado com sucesso!', user });
+    // AJUSTE: Retornando a variável correta ('novoUsuario') que foi criada.
+    res.status(201).json({ message: 'Usuário cadastrado com sucesso!', user: novoUsuario });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    // AJUSTE: Melhor tratamento de erro para email duplicado.
+    if (error.code === 'P2002') { // Código de erro do Prisma para violação de constraint única
+      return res.status(409).json({ error: 'Este email já está em uso.' });
+    }
+    res.status(500).json({ error: 'Ocorreu um erro ao cadastrar o usuário.' });
   }
 });
 
@@ -32,13 +44,17 @@ app.post('/api/login', async (req, res) => {
     return res.status(400).json({ error: 'Preencha todos os campos.' });
   }
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(401).json({ error: 'Usuário não encontrado.' });
-    const valid = await bcrypt.compare(senha, user.password);
-    if (!valid) return res.status(401).json({ error: 'Senha incorreta.' });
-    res.json({ message: 'Login realizado com sucesso!', user });
+    // CORREÇÃO: O modelo é 'usuario', não 'user'.
+    const usuario = await prisma.usuario.findUnique({ where: { email } });
+    if (!usuario) return res.status(401).json({ error: 'Usuário não encontrado.' });
+    
+    // CORREÇÃO: O campo no banco é 'senha', não 'password'.
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaValida) return res.status(401).json({ error: 'Senha incorreta.' });
+    
+    res.json({ message: 'Login realizado com sucesso!', user: usuario });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: 'Ocorreu um erro ao fazer login.' });
   }
 });
 
@@ -48,14 +64,15 @@ app.post('/api/usuario', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email é obrigatório.' });
   try {
-    const user = await prisma.user.findUnique({
+    // CORREÇÃO: O modelo é 'usuario', não 'user'.
+    const usuario = await prisma.usuario.findUnique({
       where: { email },
       select: { id: true, nome: true, email: true }
     });
-    if (!user) return res.status(404).json({ error: 'Usuário não encontrado.' });
-    res.json(user);
+    if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado.' });
+    res.json(usuario);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Ocorreu um erro ao buscar o usuário.' });
   }
 });
 
@@ -64,16 +81,19 @@ app.post('/api/usuario/resultados', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email é obrigatório.' });
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(404).json({ error: 'Usuário não encontrado.' });
-    // Supondo que existe uma tabela 'resultado' relacionada ao usuário
-    const resultados = await prisma.resultado.findMany({
-      where: { userId: user.id },
-      select: { id: true, titulo: true, resultado: true }
+    // CORREÇÃO: O modelo é 'usuario', não 'user'.
+    const usuario = await prisma.usuario.findUnique({ where: { email } });
+    if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado.' });
+    
+    // CORREÇÃO: O modelo é 'questionario', não 'resultado'.
+    // CORREÇÃO: A chave estrangeira é 'usuario_id', não 'userId'.
+    const resultados = await prisma.questionario.findMany({
+      where: { usuario_id: usuario.id },
+      select: { id: true, resultado: true, data_resposta: true } 
     });
     res.json(resultados);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Ocorreu um erro ao buscar os resultados.' });
   }
 });
 

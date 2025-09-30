@@ -4,22 +4,56 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 export default function CadastroScreen() {
+  const [nome, setNome] = useState(''); // <-- 1. Adicionado estado para o nome
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  // Função de cadastro
-  function handleRegister() {
-    if (!email || !password) {
+  // 2. Função de cadastro atualizada para ser assíncrona e fazer a chamada de API
+  async function handleRegister() {
+    if (!nome || !email || !password) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
 
-    // Aqui você faria a chamada à API de cadastro
-    console.log('Registrando usuário:', email, password);
+    // O IP da sua máquina. 'localhost' não funciona no emulador/celular.
+    const API_URL = 'http://192.168.15.4:4000/api/cadastro';
 
-    // Se cadastro der certo, volta para o login
-    router.push('/login');
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nome: nome,
+          email: email,
+          senha: password, // O backend espera 'senha'
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Se o servidor retornar um erro (ex: email já existe), exibe a mensagem dele
+        throw new Error(data.error || 'Ocorreu um erro no cadastro.');
+      }
+
+      // Se deu tudo certo
+      Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
+      router.push('/login');
+
+    } catch (error) {
+  console.error('Erro no cadastro:', error);
+  let errorMessage = 'Não foi possível conectar ao servidor. Verifique o IP e se o servidor está rodando.';
+  
+  // Verifica se o erro é um objeto Error padrão
+  if (error instanceof Error) {
+    errorMessage = error.message;
+  }
+  
+  Alert.alert('Erro', errorMessage);
+}
   }
 
   function goToLogin() {
@@ -29,11 +63,22 @@ export default function CadastroScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Cadastro</Text>
+      
+      {/* 3. Adicionado campo de input para o nome */}
+      <TextInput
+        style={styles.input}
+        placeholder="Nome Completo"
+        placeholderTextColor="#A0AEC0"
+        value={nome}
+        onChangeText={setNome}
+      />
+
       <TextInput
         style={styles.input}
         placeholder="Email"
         placeholderTextColor="#A0AEC0"
         autoCapitalize="none"
+        keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
       />

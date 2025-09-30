@@ -4,11 +4,43 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL="mysql://root:Morango10@15@@localhost:3306/risktrack"")
+  url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  password  String
+model pergunta {
+  id       Int        @id @default(autoincrement())
+  texto    String     @db.VarChar(255)
+  resposta resposta[]
+}
+
+model questionario {
+  id            Int        @id @default(autoincrement())
+  usuario_id    Int
+  resultado     String?    @db.VarChar(255)
+  data_resposta DateTime?  @default(now()) @db.DateTime(0)
+  usuario       usuario    @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "questionario_ibfk_1")
+  resposta      resposta[]
+
+  @@index([usuario_id], map: "usuario_id")
+}
+
+model resposta {
+  id              Int          @id @default(autoincrement())
+  questionario_id Int
+  pergunta_id     Int
+  resposta        String?      @db.VarChar(255)
+  questionario    questionario @relation(fields: [questionario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "resposta_ibfk_1")
+  pergunta        pergunta     @relation(fields: [pergunta_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "resposta_ibfk_2")
+
+  @@index([pergunta_id], map: "pergunta_id")
+  @@index([questionario_id], map: "questionario_id")
+}
+
+model usuario {
+  id            Int            @id @default(autoincrement())
+  nome          String         @db.VarChar(100)
+  email         String         @unique(map: "email") @db.VarChar(100)
+  senha         String         @db.VarChar(255)
+  data_cadastro DateTime?      @default(now()) @db.DateTime(0)
+  questionario  questionario[]
 }
