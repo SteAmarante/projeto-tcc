@@ -1,8 +1,8 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { questions } from './constants/questions';
+import { questions } from '../constants/questions';
 
 export default function QuestionnaireScreen() {
   const router = useRouter();

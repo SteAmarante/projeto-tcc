@@ -27,7 +27,7 @@ export default function LoginScreen() {
       if (response.ok) {
         // Salva o email do usuário logado
         await AsyncStorage.setItem('usuarioEmail', email);
-        router.push('/usuario');
+        router.push('../screens/UsuarioScreen');
       } else {
         Alert.alert('Erro', data.error || 'Login falhou.');
       }
