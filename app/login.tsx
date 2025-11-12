@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { API_BASE } from './config/api';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -17,22 +18,56 @@ export default function LoginScreen() {
     }
 
     try {
-      // Chamada à API de login
-      const response = await fetch('http://192.168.15.4:4000/api/login', {
+      const response = await fetch(`${API_BASE}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha: password })
+        body: JSON.stringify({ email, senha: password }),
       });
+
       const data = await response.json();
-      if (response.ok) {
-        // Salva o email do usuário logado
-        await AsyncStorage.setItem('usuarioEmail', email);
-        router.push('../screens/UsuarioScreen');
-      } else {
-        Alert.alert('Erro', data.error || 'Login falhou.');
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login falhou.');
       }
+
+      // ✅ Salva o email do usuário logado
+      await AsyncStorage.setItem('usuarioEmail', email);
+
+      // ✅ Verifica se há resultado pendente e envia para o backend
+      try {
+        const pending = await AsyncStorage.getItem('@pendingResult');
+        if (pending) {
+          const parsed = JSON.parse(pending);
+
+          await fetch(`${API_BASE}/api/resultados`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: data.user?.id,
+              score: parsed.score,
+              answers: parsed.answers,
+              createdAt: parsed.createdAt,
+            }),
+          });
+
+          await AsyncStorage.removeItem('@pendingResult');
+          console.log('✅ Resultado pendente enviado após login!');
+        }
+      } catch (err) {
+        console.error('Erro enviando resultado pendente após login:', err);
+      }
+
+      // ✅ Redireciona o usuário para a tela principal
+      router.push('../screens/UsuarioScreen');
+
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+      console.error('Erro no login:', error);
+      Alert.alert(
+        'Erro',
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível conectar ao servidor.'
+      );
     }
   }
 

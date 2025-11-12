@@ -4,7 +4,7 @@ import React from 'react';
 // Importe suas páginas
 import QuestionarioScreen from '../questionario';
 import UsuarioScreen from '../screens/UsuarioScreen';
-import TreinamentoScreen from '../treinamento';
+import TreinamentoScreen from '../screens/treinamento';
 
 const Tab = createBottomTabNavigator();
 

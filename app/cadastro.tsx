@@ -1,59 +1,74 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { API_BASE } from './config/api';
 
 export default function CadastroScreen() {
-  const [nome, setNome] = useState(''); // <-- 1. Adicionado estado para o nome
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  // 2. Função de cadastro atualizada para ser assíncrona e fazer a chamada de API
   async function handleRegister() {
     if (!nome || !email || !password) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
 
-    // O IP da sua máquina. 'localhost' não funciona no emulador/celular.
-    const API_URL = 'http://192.168.15.4:4000/api/cadastro';
-
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_BASE}/api/cadastro`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nome: nome,
-          email: email,
-          senha: password, // O backend espera 'senha'
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, senha: password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        // Se o servidor retornar um erro (ex: email já existe), exibe a mensagem dele
-        throw new Error(data.error || 'Ocorreu um erro no cadastro.');
+        throw new Error(data.error || 'Erro no cadastro.');
       }
 
-      // Se deu tudo certo
+      // ✅ Armazena o e-mail do usuário logado
+      await AsyncStorage.setItem('usuarioEmail', email);
+
+      // ✅ Se existir resultado pendente, envia agora que o usuário existe
+      try {
+        const pending = await AsyncStorage.getItem('@pendingResult');
+        if (pending) {
+          const parsed = JSON.parse(pending);
+
+          await fetch(`${API_BASE}/api/resultados`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: data.user?.id,
+              score: parsed.score,
+              answers: parsed.answers,
+              createdAt: parsed.createdAt,
+            }),
+          });
+
+          await AsyncStorage.removeItem('@pendingResult'); // limpa cache
+          console.log('✅ Resultado pendente enviado com sucesso!');
+        }
+      } catch (err) {
+        console.error('Erro enviando resultado pendente após cadastro:', err);
+      }
+
       Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
       router.push('/login');
 
     } catch (error) {
-  console.error('Erro no cadastro:', error);
-  let errorMessage = 'Não foi possível conectar ao servidor. Verifique o IP e se o servidor está rodando.';
-  
-  // Verifica se o erro é um objeto Error padrão
-  if (error instanceof Error) {
-    errorMessage = error.message;
-  }
-  
-  Alert.alert('Erro', errorMessage);
-}
+      console.error('Erro no cadastro:', error);
+      Alert.alert(
+        'Erro',
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível conectar ao servidor. Verifique o IP e o backend.'
+      );
+    }
   }
 
   function goToLogin() {
@@ -63,8 +78,7 @@ export default function CadastroScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Cadastro</Text>
-      
-      {/* 3. Adicionado campo de input para o nome */}
+
       <TextInput
         style={styles.input}
         placeholder="Nome Completo"
@@ -82,6 +96,7 @@ export default function CadastroScreen() {
         value={email}
         onChangeText={setEmail}
       />
+
       <TextInput
         style={styles.input}
         placeholder="Senha"
@@ -90,9 +105,11 @@ export default function CadastroScreen() {
         value={password}
         onChangeText={setPassword}
       />
+
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.registerButtonText}>Cadastrar</Text>
       </TouchableOpacity>
+
       <TouchableOpacity onPress={goToLogin} style={styles.loginButton}>
         <Text style={styles.loginButtonText}>Voltar para Login</Text>
       </TouchableOpacity>

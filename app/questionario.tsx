@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -29,7 +30,7 @@ export default function QuestionnaireScreen() {
     }
   };
 
-  const calculateAndNavigate = (finalAnswers: any[]) => {
+  const calculateAndNavigate = async (finalAnswers: any[]) => {
     let userScore = 0;
     let maxScore = 0;
 
@@ -45,9 +46,23 @@ export default function QuestionnaireScreen() {
 
     const finalPercentage = maxScore > 0 ? (userScore / maxScore) * 100 : 0;
 
-    router.replace({ 
-      pathname: '/resultado', 
-      params: { score: finalPercentage } 
+    // SALVA O RESULTADO LOCALMENTE ATÉ O USUÁRIO FAZER LOGIN/CADASTRO
+    try {
+      await AsyncStorage.setItem(
+        '@pendingResult',
+        JSON.stringify({
+          score: finalPercentage,
+          answers: finalAnswers,
+          createdAt: new Date().toISOString(),
+        })
+      );
+    } catch (err) {
+      console.error('Erro salvando resultado localmente:', err);
+    }
+
+    router.replace({
+      pathname: '/resultado',
+      params: { score: finalPercentage },
     });
   };
 

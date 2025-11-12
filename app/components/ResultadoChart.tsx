@@ -1,28 +1,74 @@
-import React from 'react';
-import { View } from 'react-native';
-import { VictoryBar, VictoryChart, VictoryTheme, VictoryAxis } from 'victory-native';
+import React, { useState } from 'react';
+import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { Card, Text, Divider, List } from 'react-native-paper';
 
-interface Resultado {
+type Resultado = {
   id: number;
   titulo: string;
-  resultado: string;
+  resultado: string | number;
+  data: string;
+  perguntas?: Array<{ pergunta: string; resposta: string }>;
+};
+
+interface Props {
+  resultados: Resultado[];
 }
 
-export default function ResultadoChart({ resultados }: { resultados: Resultado[] }) {
-  const data = resultados.map((r) => ({
-    x: r.titulo.length > 10 ? r.titulo.slice(0, 10) + '...' : r.titulo,
-    y: parseInt(r.resultado) || 0,
-  }));
+export default function ResultadoLista({ resultados }: Props) {
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const toggleExpand = (id: number) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
 
   return (
-    <View style={{ alignItems: 'center', marginVertical: 20 }}>
-      <VictoryChart theme={VictoryTheme.material} domainPadding={20}>
-        <VictoryAxis
-          style={{ tickLabels: { fontSize: 10, angle: -30, textAnchor: 'end' } }}
-        />
-        <VictoryAxis dependentAxis />
-        <VictoryBar data={data} barRatio={0.8} style={{ data: { fill: '#6200ee' } }} />
-      </VictoryChart>
-    </View>
+    <ScrollView>
+      {resultados.map((res) => (
+        <Card key={res.id} style={styles.card} onPress={() => toggleExpand(res.id)}>
+          <Card.Content>
+            <Text style={styles.titulo}>{res.titulo}</Text>
+            <Text>Resultado: {res.resultado}%</Text>
+            <Text>Data: {new Date(res.data).toLocaleDateString()}</Text>
+
+            {expandedId === res.id && res.perguntas && (
+              <View style={styles.perguntasContainer}>
+                <Divider style={{ marginVertical: 8 }} />
+                {res.perguntas.map((p, index) => (
+                  <View key={index} style={styles.pergunta}>
+                    <Text style={styles.perguntaTexto}>Q: {p.pergunta}</Text>
+                    <Text style={styles.respostaTexto}>R: {p.resposta}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </Card.Content>
+        </Card>
+      ))}
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    marginVertical: 8,
+    borderRadius: 12,
+    elevation: 2,
+  },
+  titulo: {
+    fontWeight: '600',
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  perguntasContainer: {
+    marginTop: 8,
+  },
+  pergunta: {
+    marginBottom: 6,
+  },
+  perguntaTexto: {
+    fontWeight: 'bold',
+  },
+  respostaTexto: {
+    marginLeft: 4,
+  },
+});

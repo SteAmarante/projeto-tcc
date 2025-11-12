@@ -98,6 +98,44 @@ app.post('/api/usuario/resultados', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
+// Bind to 0.0.0.0 so the server is reachable from other devices on the LAN
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+// Endpoint para receber resultados enviados pelo cliente e gravar questionario + respostas
+app.post('/api/resultados', async (req, res) => {
+  const { userId, score, answers, createdAt } = req.body;
+  if (!userId) return res.status(400).json({ error: 'userId é obrigatório.' });
+
+  try {
+    // Cria o questionario vinculado ao usuário
+    const created = await prisma.questionario.create({
+      data: {
+        usuario_id: Number(userId),
+        resultado: String(score || ''),
+        data_resposta: createdAt ? new Date(createdAt) : undefined,
+      },
+    });
+
+    // Se vierem respostas, cria cada registro em resposta
+    if (Array.isArray(answers)) {
+      const createPromises = answers.map((ans) =>
+        prisma.resposta.create({
+          data: {
+            questionario_id: created.id,
+            pergunta_id: Number(ans.questionId),
+            resposta: String(ans.answer || ''),
+          },
+        })
+      );
+
+      await Promise.all(createPromises);
+    }
+
+    res.json({ message: 'Resultado salvo com sucesso', questionarioId: created.id });
+  } catch (error) {
+    console.error('Erro salvando resultado:', error);
+    res.status(500).json({ error: 'Erro ao salvar resultado.' });
+  }
 });
