@@ -9,6 +9,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Healthcheck endpoint (some platforms require a GET / that responde 200)
+app.get('/', (req, res) => {
+  res.send('API rodando');
+});
+
 // Cadastro de usuário
 app.post('/api/cadastro', async (req, res) => {
   const { nome, email, senha } = req.body;
@@ -100,7 +105,7 @@ app.post('/api/usuario/resultados', async (req, res) => {
 const PORT = process.env.PORT || 4000;
 // Bind to 0.0.0.0 so the server is reachable from other devices on the LAN
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT} (process.env.PORT=${process.env.PORT})`);
 });
 
 // Endpoint para receber resultados enviados pelo cliente e gravar questionario + respostas
