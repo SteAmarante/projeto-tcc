@@ -40,12 +40,19 @@ app.post('/api/cadastro', async (req, res) => {
     // AJUSTE: Retornando a variável correta ('novoUsuario') que foi criada.
     res.status(201).json({ message: 'Usuário cadastrado com sucesso!', user: novoUsuario });
   } catch (error) {
+    console.error('Erro em POST /api/cadastro:', error);
     // AJUSTE: Melhor tratamento de erro para email duplicado.
     if (error.code === 'P2002') { // Código de erro do Prisma para violação de constraint única
       return res.status(409).json({ error: 'Este email já está em uso.' });
     }
     res.status(500).json({ error: 'Ocorreu um erro ao cadastrar o usuário.' });
   }
+});
+
+// GET /api/cadastro não está implementado pelo backend original.
+// Retornamos 405 para deixar claro ao cliente que deve usar POST.
+app.get('/api/cadastro', (req, res) => {
+  res.status(405).json({ error: 'Use POST /api/cadastro para criar um usuário.' });
 });
 
 // Login de usuário
@@ -65,6 +72,7 @@ app.post('/api/login', async (req, res) => {
     
     res.json({ message: 'Login realizado com sucesso!', user: usuario });
   } catch (error) {
+    console.error('Erro em POST /api/login:', error);
     res.status(500).json({ error: 'Ocorreu um erro ao fazer login.' });
   }
 });
