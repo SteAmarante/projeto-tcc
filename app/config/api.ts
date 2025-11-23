@@ -1,15 +1,14 @@
-// Central API base URL used across the app. Change only this file when you need
-// to point the app to a different server (LAN IP, emulator addresses, tunnel, etc.).
-// NOTE: This file lives under `app/` so Expo Router treats it as a route.
-// Expo Router requires a default React export for files under `app/`.
-// Export a tiny inert default component to silence that warning while keeping
-// the named export for runtime code.
-// Development vs Production base URL. In release builds `__DEV__` is false.
-export const API_BASE = __DEV__
-	? 'http://192.168.15.7:4000'
-	: 'https://risktrackapp-production.up.railway.app:8081';
+import Constants from 'expo-constants';
+
+// Prefer runtime value injected via EAS/Expo (expoConfig.extra.API_BASE) when available.
+// Fallback to a sensible default: local LAN address during dev, production URL otherwise.
+const extra = ((Constants.expoConfig as any)?.extra) || ((Constants.manifest as any)?.extra) || {};
+
+export const API_BASE =
+  (extra && extra.API_BASE) ||
+  (__DEV__ ? 'http://192.168.15.7:4000' : 'https://risktrackapp-production.up.railway.app');
 
 // Inert default export so expo-router doesn't warn about missing default export.
 export default function _ApiRoute() {
-	return null;
+  return null;
 }
