@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "express": "^5.1.0",
@@ -14,8 +15,22 @@
     "bcryptjs": "^3.0.2"
   },
   "devDependencies": {
-    "prisma": "^6.19.0",
     "nodemon": "^2.0.22"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "optionalDependencies": {
+    "prisma": "^6.19.0"
+  },
+  "dependenciesMeta": {
+    "prisma": {
+      "optional": true
+    }
+  },
+  "_comment_move_prisma_to_deps": "Prisma CLI will be invoked in postinstall; if your host prunes devDependencies, ensure prisma is installed or adjust build settings.",
   "private": true
 }
