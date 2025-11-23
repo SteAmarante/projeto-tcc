@@ -2,6 +2,7 @@
   "name": "projeto-tcc-backend",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
@@ -12,7 +13,8 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "@prisma/client": "^6.19.0",
-    "bcryptjs": "^3.0.2"
+    "bcryptjs": "^3.0.2",
+    "prisma": "^6.19.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
@@ -22,15 +24,5 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "optionalDependencies": {
-    "prisma": "^6.19.0"
-  },
-  "dependenciesMeta": {
-    "prisma": {
-      "optional": true
-    }
-  },
-  "_comment_move_prisma_to_deps": "Prisma CLI will be invoked in postinstall; if your host prunes devDependencies, ensure prisma is installed or adjust build settings.",
-  "private": true
+  }
 }
