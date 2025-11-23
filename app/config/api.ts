@@ -4,7 +4,10 @@
 // Expo Router requires a default React export for files under `app/`.
 // Export a tiny inert default component to silence that warning while keeping
 // the named export for runtime code.
-export const API_BASE = 'http://192.168.15.7:4000';
+// Development vs Production base URL. In release builds `__DEV__` is false.
+export const API_BASE = __DEV__
+	? 'http://192.168.15.7:4000'
+	: 'https://risktrackapp-production.up.railway.app:8081';
 
 // Inert default export so expo-router doesn't warn about missing default export.
 export default function _ApiRoute() {

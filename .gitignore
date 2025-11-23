@@ -17,6 +17,7 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
+*.keystore # Adicionado: Nome de arquivo comum para chaves
 
 # Metro
 .metro-health-check*
@@ -51,4 +52,4 @@ app-example
 
 # generated native folders
 /ios
-/androidr
+/android
