@@ -14,6 +14,12 @@ app.get('/', (req, res) => {
   res.send('API rodando');
 });
 
+// Simple request logger to help debugging on hosted platforms
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.ip} ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Cadastro de usuário
 app.post('/api/cadastro', async (req, res) => {
   const { nome, email, senha } = req.body;
@@ -106,6 +112,29 @@ const PORT = process.env.PORT || 4000;
 // Bind to 0.0.0.0 so the server is reachable from other devices on the LAN
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor rodando na porta ${PORT} (process.env.PORT=${process.env.PORT})`);
+});
+
+// Express error handler (last middleware) to log unexpected errors
+app.use((err, req, res, next) => {
+  console.error('Express error handler caught:', err && err.stack ? err.stack : err);
+  try {
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  } catch (e) {
+    console.error('Error sending 500 response:', e);
+  }
+});
+
+// Global handlers so we capture unhandled promise rejections and exceptions in logs
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection at Promise', p, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception thrown:', err && err.stack ? err.stack : err);
+  // Let the process exit to allow the platform to restart it, if desired
+  process.exit(1);
 });
 
 // Endpoint para receber resultados enviados pelo cliente e gravar questionario + respostas
