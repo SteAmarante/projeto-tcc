@@ -5,8 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "postinstall": "prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "express": "^5.1.0",
@@ -15,12 +14,6 @@
     "@prisma/client": "^6.19.0",
     "bcryptjs": "^3.0.2",
     "prisma": "^6.19.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
-  },
-  "prisma": {
-    "seed": "node prisma/seed.js"
   },
   "engines": {
     "node": ">=18"
