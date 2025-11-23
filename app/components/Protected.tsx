@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { useEffect, useState, ReactNode } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { ReactNode, useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 type ProtectedProps = {
   children: ReactNode;
@@ -37,3 +37,5 @@ export function Protected({ children }: ProtectedProps) {
 const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });
+
+export default Protected;
