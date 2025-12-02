@@ -29,7 +29,7 @@ As principais tecnologias e ferramentas utilizadas no desenvolvimento do RiskTra
 * **Backend como Serviço:** Prisma e MySQL
 * **Banco de Dados:** MySQL
 * **Autenticação:** MySQL
-* **Hospedagem:** Prisma e MySQL
+* **Hospedagem:** Railway
 * **Outras Ferramentas:** Git, GitHub, Visual Studio Code
 
 ## 🚀 Como Executar o Projeto
